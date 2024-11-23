@@ -86,4 +86,72 @@ const RecipeRatingSystem = () => {
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-orange-200 focus:border-orange-300 transition"
               />
               
-              {Object.entries(categories).map(([category,
+              {Object.entries(categories).map(([category, label]) => (
+                <div key={category} className="flex justify-between items-center p-2 bg-orange-50 rounded-lg">
+                  <span className="font-medium text-orange-800">{label}</span>
+                  <StarRating
+                    value={newRating[category]}
+                    onChange={(value) => handleStarClick(category, value)}
+                  />
+                </div>
+              ))}
+              
+              <textarea
+                placeholder="Jouw opmerkingen (optioneel)"
+                value={newRating.comments}
+                onChange={(e) => setNewRating(prev => ({...prev, comments: e.target.value}))}
+                className="w-full p-3 border rounded-lg h-24 focus:ring-2 focus:ring-orange-200 focus:border-orange-300 transition"
+              />
+              
+              <button
+                onClick={handleSubmit}
+                className="w-full bg-orange-500 text-white p-3 rounded-lg hover:bg-orange-600 transition font-medium"
+              >
+                Beoordeling Toevoegen
+              </button>
+            </div>
+
+            {/* Resultaten sectie */}
+            {ratings.length > 0 && (
+              <div className="mt-8">
+                <h3 className="text-xl font-bold text-orange-800 mb-4">Beoordelingen</h3>
+                <div className="space-y-4">
+                  {ratings.map((rating, index) => (
+                    <div key={index} className="border p-4 rounded-lg hover:shadow-md transition bg-orange-50">
+                      <div className="font-bold text-orange-800 mb-2">{rating.name}</div>
+                      <div className="grid grid-cols-2 gap-4">
+                        {Object.entries(categories).map(([category, label]) => (
+                          <div key={category} className="flex flex-col">
+                            <span className="text-sm text-orange-600">{label}</span>
+                            <StarRating value={rating[category]} disabled={true} />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-2 font-medium text-orange-800">
+                        Gemiddelde score: {rating.totalScore.toFixed(1)}
+                      </div>
+                      {rating.comments && (
+                        <div className="mt-2 text-gray-600 bg-white p-2 rounded">
+                          {rating.comments}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="mt-6 p-4 bg-orange-100 rounded-lg">
+                  <h4 className="font-bold text-orange-800">Groepsgemiddelde</h4>
+                  <div className="text-2xl font-bold text-orange-600">
+                    {(ratings.reduce((acc, curr) => acc + curr.totalScore, 0) / ratings.length).toFixed(1)}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default RecipeRatingSystem;
